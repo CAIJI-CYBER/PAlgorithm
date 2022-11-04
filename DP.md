@@ -8,7 +8,7 @@ dp[i]:以ai结尾的最长上升子序列长度
 	dp[i]=max{1,dp[j]+1}{ai>aj,j
 ```
 
-### 最长有效括号
+### 最长有效括号<!--  -->
 
 ```cpp
       //状态表示
@@ -85,7 +85,21 @@ dp[i][j]=0 (i==0 or j==0)
 
 ### 最长回文子串
 
+```cpp
+//状态表示
+dp[i][j]: 以i开头j结尾是否是式回文串
+//状态转移
+dp[i][j]=dp[i+1][j-1] (si=sj)
+dp[i][j]=0 (si!=sj)
+//边界条件
+dp[i][i]=1;
+```
+
 ### 判断是否是扰乱字符串
+
+```cpp
+
+```
 
 ## 背包dp
 
@@ -129,10 +143,19 @@ dp[i,w]=0 (i==0)
 
 ### 二叉树中最大路径和
 
-### 二叉树的直径
-
-```
-
+```cpp
+//此方法较为繁琐，但易于理解
+max(root){
+  maxval="min"
+  return max(dfs(root),maxval)
+}
+dfs(root){
+ if(!root):return "min";
+ left=dfs(root.left)
+ right=dfs(root.right)
+ maxval=max{maxval,left+root.val+right,left,right}
+ return max(left+root.val,right+root,val+root.val)
+}
 ```
 
 ## 状态压缩dp
@@ -141,18 +164,30 @@ dp[i,w]=0 (i==0)
 
 ### 数字为1的个数
 
+```cpp
+//十进制下，给出一个整数n，计算所有小于等于n的非负整数中数字1出现的个数
+例如n=13，则个数为6
+
+//状态标识
+```
+
 ## 计数型dp
 
 ### 无障碍物版不同路径dp
 
+```cpp
+//mxn的网格的左上角出发，到达右下角,每次只能向下or向右走，问多少种走法
+//状态表示
+dp[i][j]:从起点到i，j的走法
+//状态转移
+dp[i][j]=dp[i-1][j]+dp[i][j-1]
+```
+
 ### 障碍物版不同路径dp
 
-## 递推型dp
+```cpp
+//和上面一样，但在网格某处有一个障碍物
+
+```
 
 ## 记忆化搜索:
-
-## 斜率dp
-
-## 单调队列dp
-
-(空处再挑一易一难二题即可)
