@@ -18,6 +18,7 @@
 12.sizeof strlen
 13.inline 和 宏定义
 14.函数上 delete 和 default 用法
+15.编译链接流程：动态库和静态库区别
 ```
 
 
