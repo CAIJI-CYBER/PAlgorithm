@@ -939,12 +939,18 @@ cout<<flush or flush(cout)
 3.第五个参数有什么用
 AutoConnection： 自动连接 默认值 发送者和接收者同属一个线程下则为DirectConnection，否则为QueuedConnection
     
-DirectConnection：直接连接，信号触发时先执行槽函数，再执行emit后的部分
-QueuedConnection：队列连接，emit后的部分先执行，槽函数会在控制权回到控制者
-BlockingQueuedConnection：
-UniqueConnection：
-4.emit函数
+DirectConnection：直接连接，信号触发时先执行槽函数，再执行emit后的部分，该槽在信号线程中执行。
+    
+QueuedConnection：队列连接，emit后的部分先执行，槽函数会在控制权回到控制者线程后执行
+    
+BlockingQueuedConnection：使用Qt::BlockingQueuedConnection时，当信号被触发时，发送者会阻塞直到接收者处理完对应的槽函数，并且该槽函数会在接收者所属的线程中执行。这种连接类型适用于需要同步处理的情况，例如需要等待特定结果返回或完成某个操作后再继续执行。
+    
+UniqueConnection：唯一关联。这是一个标志，可使用按位或与上述任何连接类型组合。当设置 Qt :: UniqueConnection 时，则只有在不重复的情况下才会进行连接，如果已经存在重复连接(即，相同的信号指向同一对象上的完全相同的槽)，则连接将失败，此时将返回无效的 QMetaObject::Connection
+    
+4.自定义信号和emit函数
+    
 5.diconnect函数
+    
 ```
 
 ## 事件循环流程
