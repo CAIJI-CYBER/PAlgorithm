@@ -3,21 +3,54 @@
 ## 杂项
 
 ```c++
-1.值传递，地址传递，引用传递
-2.new delete malloc free
-3.对象指针
-4.函数指针，返回指针的函数
-5.指针数组
+1.引用传递
+ 变量的名字实际为开辟内存的别名，引用实质上就是同一块内存的不同别名
+2.malloc free new delete
+  void* malloc(size_t size)
+  :参数为开辟内存的大小，单位为字节
+  :返回值为开辟内存区域的首地址，可进行强制转换，若开辟失败则返回空指针
+  :开辟的空间不会初始化
+  new[]和 delete[]搭配
+  new 和 delete搭配，不然会报错
+
+
+3.多维数组与多维指针
+  可采用树状块图去分析
+4.指针数组、数组指针
+  指针数组就是存放指针的数组：element_type*  array[];
+  数组指针就是指向数组的指针：可以看作多级指针的另外一种写法
+  实例：
+    int array1[10] : int *p;
+    int array2[3][4] : int (*p)[4];
+    int array[3][4][5]: int(*p)[4][5];
+5.函数指针、指针函数
+  函数指针是一个表示函数的指针：return_type (*f)(args,......);
+  函数指针需要赋值后才能使用
+  指针函数就是一个返回指针的函数
+
 6.函数指针数组
-7.子类对象赋值给父类对象
-8.typedef（如何去定义类型，如何去定义函数）
- typedef oldname newname
+  指的是装载函数指针的数组
+  return_type (*f[size_t])(args,......)
+7.typedef（如何去定义类型，如何去定义函数）
+  typedef oldname newname
+  
+  定义普通类型：typedef float f1;
+  定义结构体：typedef struct{int a} INT;
+  定义指针：typedef Node* node; //node为一个结构体类型，node为为此结构体类型定义的一个指针类型
+  定义数组：typedef Node node[];
+  
+8.数组作为参数
+
+
+
+
 9.auto关键字 和 decltype 关键字
 10.const关键字
 11.字节对齐
-12.sizeof strlen
+12.sizeof 和 strlen区别
 13.inline 和 宏定义
 14.函数上 delete 和 default 用法
+15.类的基本内存结构
 ```
 
 
@@ -26,19 +59,14 @@
 
 
 
-
-
-c++ 定义类和对象
+## 扫盲
 
 ```c++
 class name{
-
     public:
       成员变量
       方法
-
 }
-
 创建对象
  int main(){
     name object1;  //创建一个类对象
@@ -57,34 +85,26 @@ c++的构造函数如果用户自己不写，那么编译器会默认分配空�
      name(){
 
      } //构造函数 ，可以有参数发生重载
-
      name(args a){
 
-     }有参构造
-
+     }//有参构造
      name(name &object){
 
-     }拷贝构造
-
+     }//拷贝构造
       name(): 成员1(值1),成员2(值2)
      {
 
-     }   //初始化列表版无参构造器
-
+     }//初始化列表版无参构造器
      ~name(){
 
      }//析构函数，不能有参数
-
-
  }
 
 int main(){
     name object: //不要加括号，不然是一个函数声明
     name object(args); //调用有参构造函数
     name object(name object)//调用拷贝构造函数
-
-
-     name object=name(args) //另外一种方法   
+    name object=name(args) //另外一种方法   
 }
 ```
 
@@ -150,8 +170,6 @@ class a{
     }
 
 }
-
-
 const 修饰对象，则该对象为常对象，这种情况下也不能去修改非mutable成员变量的值，常对象只能调用常函数
 ```
 
@@ -218,81 +236,6 @@ const 修饰对象，则该对象为常对象，这种情况下也不能去修�
     void goodGay::visit(){
          cout << building->var;
     }  
-```
-
-```c++
-运算符重载简单介绍 ：主要用于定义类的一些基本运算
-下面简单介绍下 运算符重载方法
-成员函数重载运算符和全局函数重载运算符（注意delete在重载时的作用）
-
-例1：加号重载    
-    class A{
-        public :
-          int m_a;
-          int m_b;
-          A operator + (A &p){
-              A temp;
-              temp.m_a=this.m_a+p->m_a;
-              temp.m_b=this.m_b+p->m_b;
-              return temp
-          }   //使用成员函数进行运算符重载
-    }
-
- A operator + (A &p1,A &p2){
-      A temp;
-      temp.m_a=p1->m_a+p2->m_a;
-      temp.m_b=p1->m_b+p2->m_b;
-      return temp
- }
-
-
- int main(){
-     A a1;
-     A a2;
-     ......... //做些赋值操作
-
-     A a3=a1+a2 //此时就会使用方法定义的方式去进行运算  其本质调用形势为opertor+(......);
-
- }
-
-例2 : <<输出运算符重载 ,输出需要借助标准输出对象cout，所以必须使用全局重载
-
-    class A {
-        public:
-         int ma;
-         int mb;
-    }
-   void operator <<(ostream cout , A &p){
-       cout << p->ma<<p->mb;
-   }
-
-例3: 赋值运算符
-    class A{
-        public:
-         int  *num;
-         void operator =(A &a){
-             if(num!=null){
-                delete num;
-                 num=null;
-             }
-             num=*a.num
-         }
-
-    }
-
- 例4：简单仿函数(在stl中用得比较多)
-     class A{
-         public:
-          void operator()(String text){
-              cout<< text<<endl;
-          }
-     }
-  int main(){
-      A a;
-      a("hello")
-
-       A()("hello") //匿名函数对象
-  }
 ```
 
 ## 继承与多态简介
@@ -470,6 +413,84 @@ int main(){
 */
 ```
 
+## 基本运算符重载
+
+```
+运算符重载简单介绍:主要用于定义类的一些基本运算
+下面简单介绍下 运算符重载方法
+成员函数重载运算符和全局函数重载运算符（注意delete在重载时的作用）
+例1：加号重载    
+    class A{
+        public :
+          int m_a;
+          int m_b;
+          A operator + (A &p){
+              A temp;
+              temp.m_a=this.m_a+p->m_a;
+              temp.m_b=this.m_b+p->m_b;
+              return temp
+          }   //使用成员函数进行运算符重载
+    }
+
+ A operator + (A &p1,A &p2){
+      A temp;
+      temp.m_a=p1->m_a+p2->m_a;
+      temp.m_b=p1->m_b+p2->m_b;
+      return temp
+ }
+
+
+ int main(){
+     A a1;
+     A a2;
+     ......... //做些赋值操作
+
+     A a3=a1+a2 //此时就会使用方法定义的方式去进行运算  其本质调用形势为opertor+(......);
+
+ }
+
+例2 : <<输出运算符重载 ,输出需要借助标准输出对象cout，所以必须使用全局重载
+
+    class A {
+        public:
+         int ma;
+         int mb;
+    }
+   void operator <<(ostream cout , A &p){
+       cout << p->ma<<p->mb;
+   }
+
+例3: 赋值运算符
+    class A{
+        public:
+         int  *num;
+         void operator =(A &a){
+             if(num!=null){
+                delete num;
+                 num=null;
+             }
+             num=*a.num
+         }
+
+    }
+
+ 例4：简单仿函数(在stl中用得比较多)
+     class A{
+         public:
+          void operator()(String text){
+              cout<< text<<endl;
+          }
+     }
+  int main(){
+      A a;
+      a("hello")
+
+       A()("hello") //匿名函数对象
+  }
+例5：判等运算符
+例6：new运算符
+```
+
 ## 虚函数与虚函数表
 
 ```c++
@@ -481,6 +502,8 @@ int main(){
 ```c++
 
 ```
+
+## VOID* 简单介绍
 
 ## 深拷贝
 
@@ -732,9 +755,11 @@ private:
 3.抽象工厂
 ```
 
+### 简单反射
 
+### 简单内存池
 
-# STL简单使用
+## STL简单使用
 
 string的构造函数
 
@@ -789,17 +814,9 @@ auto_ptr<string>   pd(new string);   //智能指针最基本的申请语法。�
 
 
 
-## 序列容器简单使用介绍
+### 序列容器简单使用介绍
 
 序列容器主要包含：array、vector、deque、string、stack、queue、priority_queues;
-
-
-
-
-
-
-
-
 
 vector类简单使用：对标数组的容器
 
@@ -863,33 +880,31 @@ vector类简单使用：对标数组的容器
   
   
 
-## 关联容器简单使用介绍
+### 关联容器简单使用介绍
 
 set：键是唯一的，所以不能存储多个相同的值。
 
 
 
-## 智能指针
+### 智能指针
 
-### unique_ptr
-
-```
-
-```
-
-### shared_ptr
+#### unique_ptr
 
 ```
 
 ```
 
+#### shared_ptr
+
+```
+
+```
 
 
-# c++ 基本IO简单介绍
+
+## c++ 基本IO简单介绍
 
 cout和cin调整进制方法：  hex,oct,dec
-
-
 
 输出刷新缓冲区
 
@@ -1033,6 +1048,12 @@ UniqueConnection：唯一关联。这是一个标志，可使用按位或与上�
 ```
 
 # Linux基本指令
+
+```
+
+```
+
+# MAKEFILE
 
 ```
 
