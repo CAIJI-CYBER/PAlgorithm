@@ -12,8 +12,6 @@
   :开辟的空间不会初始化
   new[]和 delete[]搭配
   new 和 delete搭配，不然会报错
-
-
 3.多维数组与多维指针
   可采用树状块图去分析
 4.指针数组、数组指针
@@ -27,28 +25,38 @@
   函数指针是一个表示函数的指针：return_type (*f)(args,......);
   函数指针需要赋值后才能使用
   指针函数就是一个返回指针的函数
-
 6.函数指针数组
   指的是装载函数指针的数组
   return_type (*f[size_t])(args,......)
-7.typedef（如何去定义类型，如何去定义函数）
-  typedef oldname newname
-  
+7.typedef（如何去定义类型，如何去定义函数）  
   定义普通类型：typedef float f1;
   定义结构体：typedef struct{int a} INT;
   定义指针：typedef Node* node; //node为一个结构体类型，node为为此结构体类型定义的一个指针类型
   定义数组：typedef Node node[];
-  
+  定义数组指针类型：typedef element_type (*pArray)[5];
+  定义函数指针：typedef return_type (*pFunc)(args,......)  
+  复杂类型定义：typedef double (* (* (*fp3) ()) [10]) ();
+如果创建许多复杂的定义，可以使用typedef。这一条显示typedef是如何缩短复杂的定义的。 跟前面一样，先找到变量名fp3（这里fp3其实是新类型名），往右看是圆括号，调转方向往左是*，说明fp3是一个指针；跳出圆括号，往右看是空参数列表，说明fp3是一个函数指针，接着往左是*号，说明该函数的返回值是一个指针；跳出第二层圆括号，往右是[]运算符，说明函数的返回值是一个数组指针，接着往左是*号，说明数组中包含的是指针；跳出第三层圆括号，往右是参数列表，说明数组中包含的是函数指针，这些函数没有参数，返回值类型是double。简言之，fp3是一个指向函数的指针，该函数无参数，且返回一个含有10个指向函数指针的数组的指针，这些函数不接受参数且返回double值。
 8.数组作为参数
-
-
-
-
 9.auto关键字 和 decltype 关键字
+  auto必须马上初始化
+  auto不能用于类的非静态成员变量
+  auto不能定义数组
+  decltype(exp) var;
+  var的类型由exp决定
+  ：exp如果是一个不被 ()包围的表达式，或者是一个单独变量、类成员访问表达式，那么var类型就和表达式类型一致
+  ：exp是函数调用，则类型和返回值类型一致
+  ：如果是一个左值或者被()包围，那就是exp类型的引用
 10.const关键字
 11.字节对齐
+  ：结构体变量的首地址能够被字节对齐的大小整除(gcc 缺省字节对齐大小是4)
+  ：结构体每个成员相对首地址的偏移需要是自身大小的整数倍
+  : 结构体的总大小需要是结构体中最大类型大小的整数倍
 12.sizeof 和 strlen区别
+   sizeof是一个运算符、strlen是一个函数，参数是char*，作用是遍历直到'/0'的大小
+   sizeof可以对很多种类型进行计算
 13.inline 和 宏定义
+  inline函数不能在循环中使用，会使代码膨胀
 14.函数上 delete 和 default 用法
 15.类的基本内存结构
 ```
@@ -150,9 +158,7 @@ int main(){
 ```c++
 this 指针用处：
     this指针是指向当前类的对象
-
     使用this来解决命名冲突
-
     使用this返回当前对象
 ```
 
@@ -165,7 +171,6 @@ class a{
     void change () const
     {
        this.var=xxx //这种情况下会报错
-
        this.var_m=xxx //这种情况不会 报错
     }
 
@@ -176,47 +181,33 @@ const 修饰对象，则该对象为常对象，这种情况下也不能去修�
 ```c++
 友元
  三种实现方式
-
     1.全局函数做友元
-
    class a{
-
       friend void goodGay(a *a); //指定goodGay方法为友元方法，可以访问该类中的私有属性
-
        private:
          int private_var;
    }
-
    void goodGay(a *a){
        cout<<a -> private_var
    }
-
    int main(){
      a a;
       goodGay(&a)
    }
-
  2.友元类
-
     class a{
          friend class goodGay;  // 让goodGay类作为友元类，goodGay中的成员函数就可以访问 a中的私有成员
-
          private:
          int var;
     } 
-
   class goodGay{
     void test(a &a)
    }
-
   goodGay::test(a &a){
     cout<< a->var
     }
-
 3.其他类的成员函数作为友元
-
     class Building{
-
         friend void  goodGay::visit(); //指定goodGay中的visit方法为友元方法
         public:
         Building();
@@ -824,26 +815,26 @@ vector类简单使用：对标数组的容器
 
 - ```c++
     创建（开拓什么类型的多大的容器）
-  
+    
     vector<double> vc(n) //n为多少个，可以是变量。
-  
+    
    使用下标访问vector中的元素。
      vc[0]=9;
      cout<<vc[0];
-  
+    
    在容器末尾添加元素：
      vc.push_back(11.0) ;
-  
+    
    迭代器：
    vector<double> iterator pd=vc.begin() //这是返回指向的头一个元素的指针。
    ++pd //遍历
-  
+    
    vector<double> iterator pd=vc.end() //指向最后一个元素后面一个的指针，用于作为停止标志
-  
+    
    删除和插入操作
    vc.erase(1,2)   //删除，两个参数为两个迭代器，第一个为删除元素的起始位置，第二个为删除元素终止位置加1；
    vc.insert(1,2,3) //插入，三个参数,第一个是被插入vector插入点的位置，元素会插入到这个位置前面，2是插入的元素组在另外一个vector中的起始位置，3是插入的元素组在另外一个vector中的结束位置（要插入的最后一个元素加1）
-  
+    
    遍历操作
     for_each(迭代器1.迭代器2，函数指针)   //对迭代器所指向的区间进行操作，操作的方式等于把作为参数传入函数指针。
     for(double num:vc){
@@ -856,13 +847,13 @@ vector类简单使用：对标数组的容器
     }
     等价于
     for_each(vc.begin();vc.end();func);
-  
+    
    随机排列操作
      random_shuffle(迭代器1,迭代器2);  //对迭代器区间内的元素进行随机分布
-  
+    
    排序操作
      sort(迭代器1.迭代器2); // 这样的排序如果是基本类型，直接进行即可，如果是自定义的类型，需要重写大小运算符<
-  
+    
   class A{
       public:
        int a;
