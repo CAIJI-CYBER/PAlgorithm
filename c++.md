@@ -3,22 +3,54 @@
 ## 杂项
 
 ```c++
-1.值传递，地址传递，引用传递
-2.new delete malloc free
-3.对象指针
-4.函数指针，返回指针的函数
-5.指针数组
+1.引用传递
+ 变量的名字实际为开辟内存的别名，引用实质上就是同一块内存的不同别名
+2.malloc free new delete
+  void* malloc(size_t size)
+  :参数为开辟内存的大小，单位为字节
+  :返回值为开辟内存区域的首地址，可进行强制转换，若开辟失败则返回空指针
+  :开辟的空间不会初始化
+  new[]和 delete[]搭配
+  new 和 delete搭配，不然会报错
+
+
+3.多维数组与多维指针
+  可采用树状块图去分析
+4.指针数组、数组指针
+  指针数组就是存放指针的数组：element_type*  array[];
+  数组指针就是指向数组的指针：可以看作多级指针的另外一种写法
+  实例：
+    int array1[10] : int *p;
+    int array2[3][4] : int (*p)[4];
+    int array[3][4][5]: int(*p)[4][5];
+5.函数指针、指针函数
+  函数指针是一个表示函数的指针：return_type (*f)(args,......);
+  函数指针需要赋值后才能使用
+  指针函数就是一个返回指针的函数
+
 6.函数指针数组
-7.子类对象赋值给父类对象
-8.typedef（如何去定义类型，如何去定义函数）
- typedef oldname newname
+  指的是装载函数指针的数组
+  return_type (*f[size_t])(args,......)
+7.typedef（如何去定义类型，如何去定义函数）
+  typedef oldname newname
+  
+  定义普通类型：typedef float f1;
+  定义结构体：typedef struct{int a} INT;
+  定义指针：typedef Node* node; //node为一个结构体类型，node为为此结构体类型定义的一个指针类型
+  定义数组：typedef Node node[];
+  
+8.数组作为参数
+
+
+
+
 9.auto关键字 和 decltype 关键字
 10.const关键字
 11.字节对齐
-12.sizeof strlen
+12.sizeof 和 strlen区别
 13.inline 和 宏定义
 14.函数上 delete 和 default 用法
-15.编译链接流程：动态库和静态库区别
+15.类的基本内存结构
 ```
 
 
@@ -27,19 +59,14 @@
 
 
 
-
-
-c++ 定义类和对象
+## 扫盲
 
 ```c++
 class name{
-
     public:
       成员变量
       方法
-
 }
-
 创建对象
  int main(){
     name object1;  //创建一个类对象
@@ -53,39 +80,31 @@ class name{
 
 ```c++
 c++的构造函数如果用户自己不写，那么编译器会默认分配空操作的构造函数和析构函数
-    
+
  class name{
      name(){
-         
+
      } //构造函数 ，可以有参数发生重载
-     
      name(args a){
-         
-     }有参构造
-     
+
+     }//有参构造
      name(name &object){
-         
-     }拷贝构造
-     
+
+     }//拷贝构造
       name(): 成员1(值1),成员2(值2)
      {
-         
-     }   //初始化列表版无参构造器
-         
+
+     }//初始化列表版无参构造器
      ~name(){
-         
+
      }//析构函数，不能有参数
-     
-     
  }
 
 int main(){
     name object: //不要加括号，不然是一个函数声明
     name object(args); //调用有参构造函数
     name object(name object)//调用拷贝构造函数
-        
-        
-     name object=name(args) //另外一种方法   
+    name object=name(args) //另外一种方法   
 }
 ```
 
@@ -118,7 +137,7 @@ class A{
 public:
    static int  num;  类内声明，类外初始化
     static int getnum(){
-       
+
    } //静态函数，只能访问静态变量
 }
 A::num=10;
@@ -131,9 +150,9 @@ int main(){
 ```c++
 this 指针用处：
     this指针是指向当前类的对象
-   
+
     使用this来解决命名冲突
-    
+
     使用this返回当前对象
 ```
 
@@ -146,44 +165,42 @@ class a{
     void change () const
     {
        this.var=xxx //这种情况下会报错
-       
+
        this.var_m=xxx //这种情况不会 报错
     }
 
 }
-
-
 const 修饰对象，则该对象为常对象，这种情况下也不能去修改非mutable成员变量的值，常对象只能调用常函数
 ```
 
 ```c++
 友元
  三种实现方式
-   
+
     1.全局函数做友元
-   
+
    class a{
-      
+
       friend void goodGay(a *a); //指定goodGay方法为友元方法，可以访问该类中的私有属性
-   
+
        private:
          int private_var;
    }
-   
+
    void goodGay(a *a){
        cout<<a -> private_var
    }
-   
+
    int main(){
      a a;
       goodGay(&a)
    }
-   
+
  2.友元类
-     
+
     class a{
          friend class goodGay;  // 让goodGay类作为友元类，goodGay中的成员函数就可以访问 a中的私有成员
-        
+
          private:
          int var;
     } 
@@ -195,17 +212,17 @@ const 修饰对象，则该对象为常对象，这种情况下也不能去修�
   goodGay::test(a &a){
     cout<< a->var
     }
-   
+
 3.其他类的成员函数作为友元
-    
+
     class Building{
-        
+
         friend void  goodGay::visit(); //指定goodGay中的visit方法为友元方法
         public:
         Building();
          m_sittingroom;
          m_bedroom
-          
+
          private:
           int var;
     }
@@ -214,86 +231,11 @@ const 修饰对象，则该对象为常对象，这种情况下也不能去修�
         public:
          void visit();
          Building  * building;
-          
+
     }
     void goodGay::visit(){
          cout << building->var;
     }  
-```
-
-```c++
-运算符重载简单介绍 ：主要用于定义类的一些基本运算
-下面简单介绍下 运算符重载方法
-成员函数重载运算符和全局函数重载运算符（注意delete在重载时的作用）
-
-例1：加号重载    
-    class A{
-        public :
-          int m_a;
-          int m_b;
-          A operator + (A &p){
-              A temp;
-              temp.m_a=this.m_a+p->m_a;
-              temp.m_b=this.m_b+p->m_b;
-              return temp
-          }   //使用成员函数进行运算符重载
-    }
-
- A operator + (A &p1,A &p2){
-      A temp;
-      temp.m_a=p1->m_a+p2->m_a;
-      temp.m_b=p1->m_b+p2->m_b;
-      return temp
- }
- 
-
- int main(){
-     A a1;
-     A a2;
-     ......... //做些赋值操作
-         
-     A a3=a1+a2 //此时就会使用方法定义的方式去进行运算  其本质调用形势为opertor+(......);
- 
- }
-
-例2 : <<输出运算符重载 ,输出需要借助标准输出对象cout，所以必须使用全局重载
-    
-    class A {
-        public:
-         int ma;
-         int mb;
-    }
-   void operator <<(ostream cout , A &p){
-       cout << p->ma<<p->mb;
-   }
-
-例3: 赋值运算符
-    class A{
-        public:
-         int  *num;
-         void operator =(A &a){
-             if(num!=null){
-                delete num;
-                 num=null;
-             }
-             num=*a.num
-         }
-        
-    }
-
- 例4：简单仿函数(在stl中用得比较多)
-     class A{
-         public:
-          void operator()(String text){
-              cout<< text<<endl;
-          }
-     }
-  int main(){
-      A a;
-      a("hello")
-       
-       A()("hello") //匿名函数对象
-  }
 ```
 
 ## 继承与多态简介
@@ -312,30 +254,30 @@ const 修饰对象，则该对象为常对象，这种情况下也不能去修�
 
 1.继承的写法：
     class 子类 ：继承方式 基类 {
-        
+
     }
 
 2.继承方式(三种继承方式是根据基类的成员继承到子类后的访问权限来划分的，在不适用友元的机制下，子类是无法访问基类中的私有类型的)：
     public ：基类中的非私有类型继承到子类中时访问权限不变
     protected : 基类中的非私有成员继承到子类时访问权限全部变为protected
     private ：基类中的非私有成员在继承到子类时访问权限全部变为private
-        
-        
-3.继承时哪些东西会传下去	？
+
+
+3.继承时哪些东西会传下去    ？
         基类中的非静态成员变量全部会传给子类，其中私有成员即使访问不到，但还是会传给子类。
-        
-        
+
+
 4.继承中的构造和析构问题
         class base{
             public:
              base(){
-                    
+
              }
             ~base(){
-            
+
             }
         }
-        
+
 
 ​      class son : public base{
 ​          son(){
@@ -361,10 +303,10 @@ const 修饰对象，则该对象为常对象，这种情况下也不能去修�
              }
             ~base(){}
             fun(){
-                
+
             }
  }
-      
+
 class son : public base{
  public:
           int var; //同名成员变量
@@ -373,10 +315,10 @@ class son : public base{
           }
           ~son(){}
           fun(){
-              
+
           } //同名的成员函数
 }
-    
+
 int main()
 {
  son son;
@@ -400,7 +342,7 @@ int main()
  分静态多态和动态多态两种
   函数重载和运算符重载这两个算是静态多态
   继承机制下的使用虚函数算动态多态
-    
+
 class animal{
     public:
      virtual void speak(){
@@ -456,19 +398,97 @@ class son:public base{
  }
  class son:public base{
       son(){
-        
+
       } 
       ~son(){
-      
+
       }
  }
 int main(){
   base  *base=new son();//多态，父类指针指向子类对象
   delete base; //释放父类指针
-  
+
  在这种情况下，不会调用子类的析构函数，这就会产生内存问题，所以产生了虚析构和纯虚析构，所以要让父类中的虚构为虚析构，从而去根据实际情况去调用子类中的虚构函数。
 }
 */
+```
+
+## 基本运算符重载
+
+```
+运算符重载简单介绍:主要用于定义类的一些基本运算
+下面简单介绍下 运算符重载方法
+成员函数重载运算符和全局函数重载运算符（注意delete在重载时的作用）
+例1：加号重载    
+    class A{
+        public :
+          int m_a;
+          int m_b;
+          A operator + (A &p){
+              A temp;
+              temp.m_a=this.m_a+p->m_a;
+              temp.m_b=this.m_b+p->m_b;
+              return temp
+          }   //使用成员函数进行运算符重载
+    }
+
+ A operator + (A &p1,A &p2){
+      A temp;
+      temp.m_a=p1->m_a+p2->m_a;
+      temp.m_b=p1->m_b+p2->m_b;
+      return temp
+ }
+
+
+ int main(){
+     A a1;
+     A a2;
+     ......... //做些赋值操作
+
+     A a3=a1+a2 //此时就会使用方法定义的方式去进行运算  其本质调用形势为opertor+(......);
+
+ }
+
+例2 : <<输出运算符重载 ,输出需要借助标准输出对象cout，所以必须使用全局重载
+
+    class A {
+        public:
+         int ma;
+         int mb;
+    }
+   void operator <<(ostream cout , A &p){
+       cout << p->ma<<p->mb;
+   }
+
+例3: 赋值运算符
+    class A{
+        public:
+         int  *num;
+         void operator =(A &a){
+             if(num!=null){
+                delete num;
+                 num=null;
+             }
+             num=*a.num
+         }
+
+    }
+
+ 例4：简单仿函数(在stl中用得比较多)
+     class A{
+         public:
+          void operator()(String text){
+              cout<< text<<endl;
+          }
+     }
+  int main(){
+      A a;
+      a("hello")
+
+       A()("hello") //匿名函数对象
+  }
+例5：判等运算符
+例6：new运算符
 ```
 
 ## 虚函数与虚函数表
@@ -482,6 +502,8 @@ int main(){
 ```c++
 
 ```
+
+## VOID* 简单介绍
 
 ## 深拷贝
 
@@ -536,7 +558,7 @@ int main(){
   int main(){
      print(1,2); //此时就会调用普通函数
      print<>(1,2) //此时使用了空模板参数列表，便可以强制去调用函数模板。
-     
+
      print('c1','c2') //如果调用普通的时候要发生隐式类型转换时， 则会调用函数模板。
   }
 
@@ -547,7 +569,7 @@ int main(){
     template <typename/class T,.................................>
     类定义;
    注意，类模板没有自动类型推导，并且类模板中可以使用默认参数
-    
+
       例子：
         template<class Nametype,class Agetype=int> //此处使用了默认类型
          class person{
@@ -568,7 +590,7 @@ int main(){
     class normal{
         public:
           void show(){
-              
+
           }
     }
 
@@ -619,13 +641,13 @@ class base{
 
 class son:public base<int> //必须要指定了基类模板的虚拟类型的具体类型才行
 {
-    
+
 }  
 
 要想灵活指定，子类也需要称为模板
  template<class T1>
  class son :public base<T1>{
-     
+
  }
 
 7. 类模板的成员函数的类外实现
@@ -653,8 +675,8 @@ class son:public base<int> //必须要指定了基类模板的虚拟类型的具
    }
 
 -person.cpp
-    
-     
+
+
 ```
 
 
@@ -665,7 +687,7 @@ class son:public base<int> //必须要指定了基类模板的虚拟类型的具
 
 ```
 1.开放-封闭原则
-	对扩展开放，对修改关闭
+    对扩展开放，对修改关闭
 2.
 ```
 
@@ -693,7 +715,7 @@ class singleton{
     static singleton* m_single;
 };
 缺陷：多线程下可能会产生多个实例
-    
+
 2.shared_ptr 加上锁模式
 class Singleton{
 public:
@@ -733,9 +755,11 @@ private:
 3.抽象工厂
 ```
 
+### 简单反射
 
+### 简单内存池
 
-# STL简单使用
+## STL简单使用
 
 string的构造函数
 
@@ -790,44 +814,36 @@ auto_ptr<string>   pd(new string);   //智能指针最基本的申请语法。�
 
 
 
-## 序列容器简单使用介绍
+### 序列容器简单使用介绍
 
 序列容器主要包含：array、vector、deque、string、stack、queue、priority_queues;
 
-
-
-
-
-
-
-
-
 vector类简单使用：对标数组的容器
 
- 
+
 
 - ```c++
     创建（开拓什么类型的多大的容器）
-    
+  
     vector<double> vc(n) //n为多少个，可以是变量。
-    
+  
    使用下标访问vector中的元素。
      vc[0]=9;
      cout<<vc[0];
-     
+  
    在容器末尾添加元素：
      vc.push_back(11.0) ;
-     
+  
    迭代器：
    vector<double> iterator pd=vc.begin() //这是返回指向的头一个元素的指针。
    ++pd //遍历
-   
+  
    vector<double> iterator pd=vc.end() //指向最后一个元素后面一个的指针，用于作为停止标志
-   
+  
    删除和插入操作
    vc.erase(1,2)   //删除，两个参数为两个迭代器，第一个为删除元素的起始位置，第二个为删除元素终止位置加1；
    vc.insert(1,2,3) //插入，三个参数,第一个是被插入vector插入点的位置，元素会插入到这个位置前面，2是插入的元素组在另外一个vector中的起始位置，3是插入的元素组在另外一个vector中的结束位置（要插入的最后一个元素加1）
-       
+  
    遍历操作
     for_each(迭代器1.迭代器2，函数指针)   //对迭代器所指向的区间进行操作，操作的方式等于把作为参数传入函数指针。
     for(double num:vc){
@@ -840,13 +856,13 @@ vector类简单使用：对标数组的容器
     }
     等价于
     for_each(vc.begin();vc.end();func);
-    
+  
    随机排列操作
      random_shuffle(迭代器1,迭代器2);  //对迭代器区间内的元素进行随机分布
-    
+  
    排序操作
      sort(迭代器1.迭代器2); // 这样的排序如果是基本类型，直接进行即可，如果是自定义的类型，需要重写大小运算符<
-   
+  
   class A{
       public:
        int a;
@@ -861,37 +877,34 @@ vector类简单使用：对标数组的容器
   另外一种方法
   sort(迭代器1.迭代器2，函数指针)  //该函数指针接受迭代器1和迭代器2作为参数，按照返回值为true方式进行排序。
   ```
+  
+  
 
-
-
-
-## 关联容器简单使用介绍
+### 关联容器简单使用介绍
 
 set：键是唯一的，所以不能存储多个相同的值。
 
 
 
-## 智能指针
+### 智能指针
 
-### unique_ptr
-
-```
-
-```
-
-### shared_ptr
+#### unique_ptr
 
 ```
 
 ```
 
+#### shared_ptr
+
+```
+
+```
 
 
-#  c++ 基本IO简单介绍
+
+## c++ 基本IO简单介绍
 
 cout和cin调整进制方法：  hex,oct,dec
-
-
 
 输出刷新缓冲区
 
@@ -903,23 +916,23 @@ cout<<flush or flush(cout)
    ofstream of; //定义输出流
    of.open("op.txt") //打开文件
      or
-     
+
    ofstream of("op.txt")
-   
+
    往文件里加东西
     of<<"sss";
-  
+
   文件输入流
   ifstream if;
   if.open("op.txt");
-  
+
   or 
-  
+
   ifstream if("op.txt")
-  
-  
+
+
   if>>char[];
-  
+
   关闭io流：io流.close();
 ```
 
@@ -932,26 +945,26 @@ cout<<flush or flush(cout)
 ```c++
 1.建立连接的几种方式，及其区别
      connect(btn_close, SIGNAL(clicked()), this, SLOT(DoCloseSlot())); 传统写法，本质上是将函数名字转为字符串，参数不对应时编译器不会报错
-    
+
     connect(this, &TestMoc::testMocSignal, this, &TestMoc::DoCloseSlot);
 仿函数写法，参数不对应会编译出错
-    
+
 2.信号槽和boost库中的sianal的区别
 3.第五个参数有什么用
 AutoConnection： 自动连接 默认值 发送者和接收者同属一个线程下则为DirectConnection，否则为QueuedConnection
-    
+
 DirectConnection：直接连接，信号触发时先执行槽函数，再执行emit后的部分，该槽在信号线程中执行。
-    
+
 QueuedConnection：队列连接，emit后的部分先执行，槽函数会在控制权回到控制者线程后执行
-    
+
 BlockingQueuedConnection：使用Qt::BlockingQueuedConnection时，当信号被触发时，发送者会阻塞直到接收者处理完对应的槽函数，并且该槽函数会在接收者所属的线程中执行。这种连接类型适用于需要同步处理的情况，例如需要等待特定结果返回或完成某个操作后再继续执行。
-    
+
 UniqueConnection：唯一关联。这是一个标志，可使用按位或与上述任何连接类型组合。当设置 Qt :: UniqueConnection 时，则只有在不重复的情况下才会进行连接，如果已经存在重复连接(即，相同的信号指向同一对象上的完全相同的槽)，则连接将失败，此时将返回无效的 QMetaObject::Connection
-    
+
 4.自定义信号和emit函数
-    
+
 5.diconnect函数
-    
+
 ```
 
 ## 事件循环流程
@@ -1008,3 +1021,52 @@ UniqueConnection：唯一关联。这是一个标志，可使用按位或与上�
 
 ```
 
+## 数据库
+
+```sql
+
+```
+
+# 基本通信协议
+
+## IP协议和MAC协议
+
+## TCP协议
+
+## UDP协议
+
+# SQL基础
+
+```
+
+```
+
+# 多线程基础
+
+```
+
+```
+
+# Linux基本指令
+
+```
+
+```
+
+# MAKEFILE
+
+```
+
+```
+
+# CMAKE
+
+```
+
+```
+
+# 数据结构和算法
+
+```
+
+```
