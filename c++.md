@@ -61,50 +61,47 @@
 15.类的基本内存结构
 ```
 
-
-
-
-
-
-
 ## 扫盲
 
 ```c++
-       public: 类内类外均可访问
-    protected:类内可以访问，类外无法访问，子类可以访问。
-    private:类内可以访问，类外和子类都无法访问。
+public: 类内类外均可访问
+protected:类内可以访问，类外无法访问，子类可以访问。
+private:类内可以访问，类外和子类都无法访问。
 ```
 
+## 浅谈构造函数
+
 ```c++
-c++的构造函数如果用户自己不写，那么编译器会默认分配空操作的构造函数和析构函数
- class name{
-     name(){
-
-     } //构造函数 ，可以有参数发生重载
-     name(args a){
-
-     }//有参构造
-     name(name &object){
-
-     }//拷贝构造
-      name(): 成员1(值1),成员2(值2)
-     {
-
-     }//初始化列表版无参构造器
-     ~name(){
-
-     }//析构函数，不能有参数
- }
-
-int main(){
-    name object: //不要加括号，不然是一个函数声明
-    name object(args); //调用有参构造函数
-    name object(name object)//调用拷贝构造函数
-    name object=name(args) //另外一种方法   
+class Obj
+{
+    //类中共有以下几种构造函数
+    //默认构造函数：若没有手动定义任何构造函数，则编译器会默认提供一个
+    //一般构造函数：程序员手动定义的一般构造函数一般是带各个字段的参数
+    //转换构造函数
+    //拷贝构造函数,自动调用时机如下（不考虑编译器优化）
+	//当用类的一个对象去初始化该类的另一个对象时，系统会自动调用拷贝构造函数；
+	//将一个对象作为实参传递给一个非引用类型的形参，系统会自动调用拷贝构造函数；
+	//从一个返回类为非引用的函数返回一个对象时，系统会自动调用拷贝构造函数；
+	//用花括号列表初始化一个数组的元素时，系统会自动调用拷贝构造函数。
+    obj(const obj& objTarget);
+    //移动构造函数，自动调用时机如下：
+   /*非 const 右值引用只能操作右值，程序执行结果中产生的临时对象（例如函数返回值、lambda 表达式等）既无名称也无法获取其存储地址，所以属于右值。当类中同时包含拷贝构造函数和移动构造函数时，如果使用临时对象初始化当前类的对象，编译器会优先调用移动构造函数来完成此操作。只有当类中没有合适的移动构造函数时，编译器才会退而求其次，调用拷贝构造函数,若想用左值初始化时用移动构造，就可以使用std::move()*/
+    obj(obj &&objTarget)
 }
 ```
 
+## 拷贝构造禁用
 
+```c++
+某些情况下我们封装一些类不希望这些类进行拷贝构造，因为有时复制会造成大量重复操作
+介绍三种基本方法去禁用拷贝构造：
+class obj
+{obj(const obj& o)=delete} //显示禁用
+class obj
+{private:obj(const obj& o);}//定义为私有
+class obj:public boost::noncopyable //使用三方库
+{}
+```
 
 
 
@@ -394,80 +391,22 @@ int main(){
 
 ## 基本运算符重载
 
+### 赋值重载与移动语义
+
 ```
-运算符重载简单介绍:主要用于定义类的一些基本运算
-下面简单介绍下 运算符重载方法
-成员函数重载运算符和全局函数重载运算符（注意delete在重载时的作用）
-例1：加号重载    
-    class A{
-        public :
-          int m_a;
-          int m_b;
-          A operator + (A &p){
-              A temp;
-              temp.m_a=this.m_a+p->m_a;
-              temp.m_b=this.m_b+p->m_b;
-              return temp
-          }   //使用成员函数进行运算符重载
-    }
 
- A operator + (A &p1,A &p2){
-      A temp;
-      temp.m_a=p1->m_a+p2->m_a;
-      temp.m_b=p1->m_b+p2->m_b;
-      return temp
- }
+```
 
+### ()重载与仿函数
 
- int main(){
-     A a1;
-     A a2;
-     ......... //做些赋值操作
+```
 
-     A a3=a1+a2 //此时就会使用方法定义的方式去进行运算  其本质调用形势为opertor+(......);
+```
 
- }
+### *与[ ]运算符重载
 
-例2 : <<输出运算符重载 ,输出需要借助标准输出对象cout，所以必须使用全局重载
+```
 
-    class A {
-        public:
-         int ma;
-         int mb;
-    }
-   void operator <<(ostream cout , A &p){
-       cout << p->ma<<p->mb;
-   }
-
-例3: 赋值运算符
-    class A{
-        public:
-         int  *num;
-         void operator =(A &a){
-             if(num!=null){
-                delete num;
-                 num=null;
-             }
-             num=*a.num
-         }
-
-    }
-
- 例4：简单仿函数(在stl中用得比较多)
-     class A{
-         public:
-          void operator()(String text){
-              cout<< text<<endl;
-          }
-     }
-  int main(){
-      A a;
-      a("hello")
-
-       A()("hello") //匿名函数对象
-  }
-例5：判等运算符
-例6：new运算符
 ```
 
 ## 虚函数与虚函数表
@@ -755,132 +694,13 @@ private:
 
 ### 简单内存池
 
-## STL简单使用
+## STL简介
 
-string的构造函数
+### 序列型
 
-![1656938856731](C:\Users\蒲照寰\AppData\Roaming\Typora\typora-user-images\1656938856731.png)
+### 键值对型
 
-```
-string 的输入
-   string str
-   cin>>str;
-   getline(cin,str)
-```
-
-string中的find方法，用于发现子串
-
-![1656939737769](C:\Users\蒲照寰\Desktop\背\1656939737769.png)
-
-string::npos是如果没有包含关系则返回的东西。它的值是string对象能够存储的最大字符数，由此可以判断没有找到字串。
-
-```
-reverse函数
-内存按照 n*16-1分配，
-reverse(size t);
-n*16-1>=t ；来算。
-```
-
-
-
-智能指针简单介绍
-
-auto_ptr;   //这种在开发中比较少用，因为其有一定的缺陷，主要是如果定义两个这种类型的智能指针，将一个普通指针的值同时赋给这两个智能     指针，那么在两个对象析构时会发生错误。 例如：智能指针1=智能指针2 这样实际上这俩就引用的同一个地址。
-
-unique_ptr;  //升级版1，同时赋值时会转让所有权。 
-
-```
-unique_ptr p1(new ........);
-unique_ptr p2;
-p2=p1; 所有权被剥夺，编译器会报错，那咋用这个指针。
-
-一般是用于函数返回值，由于返回后，函数体内的是一个悬挂指针，就不会有危险了。 同理，匿名对象下的赋值也不会有问题。
-如果你要硬赋值，可以使用        智能指针1=std::move（智能指针2）函数来。
-```
-
-shared_ptr;   //  升级版2，同一个对象地址被多个智能指针引用时，有一个计数器，析构一个智能指针，计数器就会-1，当且仅当计数器为0时才会delete
-
-这三个本质上是三个模板类，new的对象的地址可以赋给他们，他们在生命周期结束的时候会析构，从而delete掉其中的内存，防止内存泄漏。
-
-```c++
-#include<memory.h> //智能指针的头文件
-auto_ptr<double> pd(new double);
-auto_ptr<string>   pd(new string);   //智能指针最基本的申请语法。其他两种智能指针的用法一致。
-```
-
-
-
-### 序列容器简单使用介绍
-
-序列容器主要包含：array、vector、deque、string、stack、queue、priority_queues;
-
-vector类简单使用：对标数组的容器
-
-
-
-- ```c++
-    创建（开拓什么类型的多大的容器）
-  
-    vector<double> vc(n) //n为多少个，可以是变量。
-  
-   使用下标访问vector中的元素。
-     vc[0]=9;
-     cout<<vc[0];
-  
-   在容器末尾添加元素：
-     vc.push_back(11.0) ;
-  
-   迭代器：
-   vector<double> iterator pd=vc.begin() //这是返回指向的头一个元素的指针。
-   ++pd //遍历
-  
-   vector<double> iterator pd=vc.end() //指向最后一个元素后面一个的指针，用于作为停止标志
-  
-   删除和插入操作
-   vc.erase(1,2)   //删除，两个参数为两个迭代器，第一个为删除元素的起始位置，第二个为删除元素终止位置加1；
-   vc.insert(1,2,3) //插入，三个参数,第一个是被插入vector插入点的位置，元素会插入到这个位置前面，2是插入的元素组在另外一个vector中的起始位置，3是插入的元素组在另外一个vector中的结束位置（要插入的最后一个元素加1）
-  
-   遍历操作
-    for_each(迭代器1.迭代器2，函数指针)   //对迭代器所指向的区间进行操作，操作的方式等于把作为参数传入函数指针。
-    for(double num:vc){
-        cout<<num;
-    }  
-   例如
-    vectotr<double>::iterator pd;
-    for(pd=vc.begin();pd!=vc.end();pd++){
-         func(*pd);
-    }
-    等价于
-    for_each(vc.begin();vc.end();func);
-  
-   随机排列操作
-     random_shuffle(迭代器1,迭代器2);  //对迭代器区间内的元素进行随机分布
-  
-   排序操作
-     sort(迭代器1.迭代器2); // 这样的排序如果是基本类型，直接进行即可，如果是自定义的类型，需要重写大小运算符<
-  
-  class A{
-      public:
-       int a;
-  }
-  
-  bool operator<(const A &a1,const A &a2){
-      if(a1.a>a2.a){
-          return true;
-      }
-  }  //这种是升序排序
-  
-  另外一种方法
-  sort(迭代器1.迭代器2，函数指针)  //该函数指针接受迭代器1和迭代器2作为参数，按照返回值为true方式进行排序。
-  ```
-  
-  
-
-### 关联容器简单使用介绍
-
-set：键是唯一的，所以不能存储多个相同的值。
-
-
+### 常见算法
 
 ### 智能指针
 
@@ -1016,8 +836,6 @@ UniqueConnection：唯一关联。这是一个标志，可使用按位或与上�
 ```
 
 ```
-
-四大窗口(栈窗口、、、)
 
 ## 多线程
 
