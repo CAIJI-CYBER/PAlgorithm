@@ -59,6 +59,8 @@
   inline函数不能在循环中使用，会使代码膨胀
 14.函数上 delete 和 default 用法
 15.类的基本内存结构
+16.右值引用简介
+17.explicit关键字
 ```
 
 ## 扫盲
@@ -769,7 +771,13 @@ QT对象之间可以存在父子关系，每一个对象都可以保存它所有
 Q_OBJECT会激活元对象系统，会被赋予以下三机制
 *信号槽机制
 *元对象信息
+    metaObject()方法可以返回QMetaObject;
+	QMetaObject可获得以下信息
+	类名和方法信息
 *动态属性
+	QMetaProperty
+    QMetaClassInfo
+    QMetaEnum
 ```
 
 ## 信号与槽
@@ -777,26 +785,21 @@ Q_OBJECT会激活元对象系统，会被赋予以下三机制
 ```c++
 1.建立连接的几种方式，及其区别
      connect(btn_close, SIGNAL(clicked()), this, SLOT(DoCloseSlot())); 传统写法，本质上是将函数名字转为字符串，参数不对应时编译器不会报错
-
     connect(this, &TestMoc::testMocSignal, this, &TestMoc::DoCloseSlot);
 仿函数写法，参数不对应会编译出错
-
+    
 2.信号槽和boost库中的sianal的区别
+    
 3.第五个参数有什么用
-AutoConnection： 自动连接 默认值 发送者和接收者同属一个线程下则为DirectConnection，否则为QueuedConnection
-
+AutoConnection：  发送者和接收者同属一个线程下则为DirectConnection，否则为QueuedConnection
 DirectConnection：直接连接，信号触发时先执行槽函数，再执行emit后的部分，该槽在信号线程中执行。
-
 QueuedConnection：队列连接，emit后的部分先执行，槽函数会在控制权回到控制者线程后执行
-
 BlockingQueuedConnection：使用Qt::BlockingQueuedConnection时，当信号被触发时，发送者会阻塞直到接收者处理完对应的槽函数，并且该槽函数会在接收者所属的线程中执行。这种连接类型适用于需要同步处理的情况，例如需要等待特定结果返回或完成某个操作后再继续执行。
-
 UniqueConnection：唯一关联。这是一个标志，可使用按位或与上述任何连接类型组合。当设置 Qt :: UniqueConnection 时，则只有在不重复的情况下才会进行连接，如果已经存在重复连接(即，相同的信号指向同一对象上的完全相同的槽)，则连接将失败，此时将返回无效的 QMetaObject::Connection
-
+    
 4.自定义信号和emit函数
-
+    
 5.diconnect函数
-
 ```
 
 ## 事件循环流程
@@ -935,5 +938,4 @@ buble_sort(arr)
     }
 }
 ```
-
 
