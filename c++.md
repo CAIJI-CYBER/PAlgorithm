@@ -810,8 +810,11 @@ UniqueConnection：唯一关联。这是一个标志，可使用按位或与上�
 
 ## delegate与mvc(列表、表格、树)
 
-```
-
+```C++
+1.QModelIndex 
+2.QStandardItemModel
+3.QVariant
+4.QAbstractItemModel 和 Qdelegate
 ```
 
 ## graphicview与绘图
@@ -856,10 +859,8 @@ UniqueConnection：唯一关联。这是一个标志，可使用按位或与上�
 1.继承QThread实现多线程
 2.继承QObject并moveToThread实现多线程
 3.使用线程池
-
 4.QSemaphore信号量进行互斥
 5.QMutex
-
 6.Qt Concurrent
 ```
 
