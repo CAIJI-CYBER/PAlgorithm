@@ -796,16 +796,19 @@ DirectConnection：直接连接，信号触发时先执行槽函数，再执行e
 QueuedConnection：队列连接，emit后的部分先执行，槽函数会在控制权回到控制者线程后执行
 BlockingQueuedConnection：使用Qt::BlockingQueuedConnection时，当信号被触发时，发送者会阻塞直到接收者处理完对应的槽函数，并且该槽函数会在接收者所属的线程中执行。这种连接类型适用于需要同步处理的情况，例如需要等待特定结果返回或完成某个操作后再继续执行。
 UniqueConnection：唯一关联。这是一个标志，可使用按位或与上述任何连接类型组合。当设置 Qt :: UniqueConnection 时，则只有在不重复的情况下才会进行连接，如果已经存在重复连接(即，相同的信号指向同一对象上的完全相同的槽)，则连接将失败，此时将返回无效的 QMetaObject::Connection
-    
-4.自定义信号和emit函数
-    
-5.diconnect函数
+   
+4.diconnect函数
 ```
 
 ## 事件循环流程
 
 ```c++
-
+主线程循环exec
+事件发生被postevent送到队列 (sendevent是直接送到接收者)
+分发器分发事件，Qapplication::notify送到接收者
+若接收者有过滤器，则先走过滤器，eventFilter返回true则事件处理完不发给接收者了，反之则发。
+事件接受者接受处理(可选择性处理，通用的还是调用基类处理方法，基类中对常见事件都做了默认处理，有需要可以重写)
+若接受者
 ```
 
 ## delegate与mvc(列表、表格、树)
