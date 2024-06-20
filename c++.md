@@ -126,24 +126,24 @@ int main(){
 class Outter
 {
 public:
-	void funcoutter()
-	{
-		Inner inner1;
-		//inner1.inner;无权访问
-	}
-	class Inner
-	{
-	public:
-		void funcinner()
-		{
-			Outter ot;
-			ot.outter + 1;
-		}
-	private:
-		double inner;
-	};
+    void funcoutter()
+    {
+        Inner inner1;
+        //inner1.inner;无权访问
+    }
+    class Inner
+    {
+    public:
+        void funcinner()
+        {
+            Outter ot;
+            ot.outter + 1;
+        }
+    private:
+        double inner;
+    };
 private:
-	double outter;
+    double outter;
 };
 
 
@@ -314,6 +314,13 @@ int main()
 }
 final修饰类，则类无法被继承
 final修饰虚函数，则函数无法被重写
+```
+
+## 虚拟继承
+
+```c++
+虚继承是为了解决菱形继承中基类的数据重复而诞生的
+虚继承基类的构造需要在最终派生类构造函数中去进行
 ```
 
 ## 动多态简介
@@ -751,9 +758,30 @@ private:
 
 ### 序列型
 
+```
+std::vector:
+  capacity():当前分配的大小可容纳多少个元素
+  size():当前已存数量 
+  rbegin(),rend():反向迭代器
+  扩容：开辟新空间、拷贝旧元素、释放旧空间
+  正常扩容一般是倍数扩容，这样会将插入时间复杂度降低
+  resize()是改变元素个数，只有超过capacity才会扩容，大于当前size会创建新元素，小于会删除
+  reserve()是改变分配的大小，超过capacity会重新分配，小于不起作用
+  emplace_back支持直接传入构造函数所需参数
+```
+
 ### 键值对型
 
+```
+std::map:
+std::unordered_map;
+```
+
 ### 常见算法
+
+```
+
+```
 
 ### 智能指针
 
@@ -834,10 +862,10 @@ Q_OBJECT会激活元对象系统，会被赋予以下三机制
 *信号槽机制
 *元对象信息
     metaObject()方法可以返回QMetaObject;
-	QMetaObject可获得以下信息
-	类名和方法信息
+    QMetaObject可获得以下信息
+    类名和方法信息
 *动态属性
-	QMetaProperty
+    QMetaProperty
     QMetaClassInfo
     QMetaEnum
 ```
@@ -849,16 +877,16 @@ Q_OBJECT会激活元对象系统，会被赋予以下三机制
      connect(btn_close, SIGNAL(clicked()), this, SLOT(DoCloseSlot())); 传统写法，本质上是将函数名字转为字符串，参数不对应时编译器不会报错
     connect(this, &TestMoc::testMocSignal, this, &TestMoc::DoCloseSlot);
 仿函数写法，参数不对应会编译出错
-    
+
 2.信号槽和boost库中的sianal的区别
-    
+
 3.第五个参数有什么用
 AutoConnection：  发送者和接收者同属一个线程下则为DirectConnection，否则为QueuedConnection
 DirectConnection：直接连接，信号触发时先执行槽函数，再执行emit后的部分，该槽在信号线程中执行。
 QueuedConnection：队列连接，emit后的部分先执行，槽函数会在控制权回到控制者线程后执行
 BlockingQueuedConnection：使用Qt::BlockingQueuedConnection时，当信号被触发时，发送者会阻塞直到接收者处理完对应的槽函数，并且该槽函数会在接收者所属的线程中执行。这种连接类型适用于需要同步处理的情况，例如需要等待特定结果返回或完成某个操作后再继续执行。
 UniqueConnection：唯一关联。这是一个标志，可使用按位或与上述任何连接类型组合。当设置 Qt :: UniqueConnection 时，则只有在不重复的情况下才会进行连接，如果已经存在重复连接(即，相同的信号指向同一对象上的完全相同的槽)，则连接将失败，此时将返回无效的 QMetaObject::Connection
-   
+
 4.diconnect函数
 ```
 
@@ -985,23 +1013,100 @@ UniqueConnection：唯一关联。这是一个标志，可使用按位或与上�
 
 # 数据结构和算法
 
+## 链表求环
+
+```
+快慢指针，两指针相遇时再释放一枚慢指针，两个慢指针相遇的点就是环的入口
+```
+
+## 栈求表达式
+
+```
+
+```
+
+## 循环队列
+
+```
+
+```
+
 ## 冒泡
 
 ```
-buble_sort(arr)
-{
-    int indexChange=arr.size()-1; //记录最后一次交换的位置
-    while(indexChange>1)
-    {
-        for(int j=0;j<indexChange;j++)
-        {
-            if(arr[j]>arr[j+1])
-            {
-                swap(arr[j],arr[j+1])
-                indexChange=j+1;
-            }
-        }
-    }
-}
+int currentButtom;
 ```
+
+## 希尔排序
+
+```
+
+```
+
+## 基数排序
+
+```
+
+```
+
+## 堆排序
+
+```
+
+```
+
+## 快速排序
+
+```
+
+```
+
+## 归并排序
+
+```
+
+```
+
+## Hash查找简介
+
+```
+冲突时：
+线性探测：往下一位找
+平方探测：偏移平方去找
+双散列：两个散列函数，第一个冲突了用第二个算
+开链法：类似hashtable
+```
+
+## Prim算法
+
+```
+
+```
+
+## Kruskal算法
+
+```
+
+```
+
+## Dijstra算法
+
+```
+
+```
+
+## 拓扑排序
+
+```
+
+```
+
+## 关键路径
+
+```
+
+```
+
+
+
 
