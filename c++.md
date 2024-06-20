@@ -62,6 +62,8 @@
 16.右值引用简介
 17.explicit关键字
 18.动态库静态库区别
+19.strlen和sizeof的区别
+20.volatile关键字
 ```
 
 ## 扫盲
@@ -439,7 +441,9 @@ int main(){
 
 ```
 
-## 虚函数与虚函数表
+### &运算符重载
+
+## 虚函数表与RTTI
 
 ```c++
 
@@ -789,6 +793,18 @@ private:
 
 ```
 
+#### weak_ptr
+
+```
+
+```
+
+#### auto_ptr
+
+```
+
+```
+
 
 
 ## c++ 基本IO简单介绍
@@ -1013,3 +1029,4 @@ buble_sort(arr)
 }
 ```
 
+https://www.iamshuaidi.com/2428.html
