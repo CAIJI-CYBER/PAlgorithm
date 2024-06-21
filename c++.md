@@ -60,10 +60,14 @@
 14.函数上 delete 和 default 用法
 15.类的基本内存结构
 16.右值引用简介
+      
 17.explicit关键字
 18.动态库静态库区别
 19.strlen和sizeof的区别
+      前者运行期计算 后者编译期计算
+      一个会退化一个不会
 20.volatile关键字
+      ：总是从所在的内存区域去读取
 ```
 
 ## 扫盲
@@ -405,8 +409,13 @@ int main(){
 
 ### 赋值重载与移动语义
 
-```
-
+```c++
+class A
+{
+	A& operator=(const A& right)
+    {;}
+    A& operator=(constA&& right);//移动赋值
+}
 ```
 
 ### ()重载与仿函数
@@ -794,7 +803,11 @@ std::unordered_map;
 #### shared_ptr
 
 ```
-
+shared_ptr
+{
+	member* ptr;
+    controlblock* ptr;
+}
 ```
 
 #### weak_ptr
@@ -953,14 +966,44 @@ UniqueConnection：唯一关联。这是一个标志，可使用按位或与上�
 2.继承QObject并moveToThread实现多线程
 3.使用线程池
 4.QSemaphore信号量进行互斥
+  acquire(n) ：请求n个信号量，若没有则阻塞
+  release(n) ：释放n个信号量
 5.QMutex
-6.Qt Concurrent
+  lock()--unlock();手动调用
+  QmutexLocker locker(mutex); 用locker上锁，作用域结束自动解锁
+6.QWaitCondition使用
+  wait(mutex):阻塞，并释放调mutex;
+  waitone()
+  waitall();
 ```
 
 ## 网络
 
 ```
+    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL"); // 或者 "QSQLITE", "QPSQL", 等
+    db.setHostName("localhost");
+    db.setDatabaseName("testdb");
+    db.setUserName("root");
+    db.setPassword("password");
 
+    if (!db.open()) {
+        qDebug() << "Failed to connect to database:" << db.lastError().text();
+        return false;
+    }
+    return true;
+   
+   
+   QSqlQuery query;
+    if (!query.exec("SELECT * FROM test_table")) {
+        qDebug() << "Query execution failed:" << query.lastError().text();
+        return;
+    }
+
+    while (query.next()) {
+        int id = query.value(0).toInt();
+        QString name = query.value(1).toString();
+        qDebug() << "ID:" << id << "Name:" << name;
+    }
 ```
 
 ## 数据库
@@ -1011,7 +1054,7 @@ UniqueConnection：唯一关联。这是一个标志，可使用按位或与上�
 
 ```
 
-# 数据结构和算法
+# 数据结构
 
 ## 链表求环
 
@@ -1067,6 +1110,14 @@ int currentButtom;
 
 ```
 
+## kmp算法
+
+```
+
+```
+
+
+
 ## Hash查找简介
 
 ```
@@ -1107,6 +1158,15 @@ int currentButtom;
 
 ```
 
+## 红黑树
 
+```
 
+```
+
+## B+树
+
+```
+
+```
 
